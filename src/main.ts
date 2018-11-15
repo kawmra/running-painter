@@ -28,10 +28,14 @@ function distance(a: Point, b: Point): number {
 }
 
 var target: Point = undefined
+const ghost = document.getElementById('ghost')
+const canvas = document.getElementById('canvas')
 
 Sketch.create({
   autoclear: false,
   retina: 'auto',
+  container: canvas,
+  eventTarget: canvas,
   setup() {
     this.r = this.g = this.b = random(100, 200)
     target = { x: this.width / 2.0, y: this.height / 2.0 }
@@ -56,5 +60,7 @@ Sketch.create({
     this.beginPath()
     this.arc(target.x, target.y, 10, 0, 2 * Math.PI)
     this.fill();
+    ghost.style.top = `${target.y}px`
+    ghost.style.left = `${target.x}px`
   }
 })

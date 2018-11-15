@@ -2,3 +2,14 @@ body {
     margin: 0;
     padding: 0;
 }
+
+#ghost {
+    position: absolute;
+    font-size: 40px;
+    text-align: center;
+    width: 100px;
+    height: 100px;
+    margin-top: -64px;
+    margin-left: -50px;
+    line-height: 100px;
+}
