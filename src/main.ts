@@ -27,6 +27,23 @@ function distance(a: Point, b: Point): number {
   return Math.sqrt(dx * dx + dy * dy)
 }
 
+interface Force {
+  dx: number
+  dy: number
+}
+
+function calcForce(a: Point, b: Point): Force {
+  const f = power(a, b)
+  const t = angle(a, b)
+  var dy = f * Math.sin(t)
+  var dx = f * Math.cos(t)
+  if (a.x < b.x) {
+    dx *= -1;
+    dy *= -1;
+  }
+  return { dx, dy }
+}
+
 var target: Point = undefined
 const ghost = document.getElementById('ghost')
 const canvas = document.getElementById('canvas')
@@ -45,15 +62,11 @@ Sketch.create({
     this.r = 255 * (touch.x / this.width)
     this.g = 255 * (touch.y / this.height)
     this.b = 255 * abs(cos(PI * touch.y / this.width))
-    const f = power(target, touch)
-    const a = angle(target, touch)
-    var dy = f * Math.sin(a)
-    var dx = f * Math.cos(a)
-    if (target.x < touch.x) {
-      dx *= -1;
-      dy *= -1;
-    }
-    target = { x: target.x + dx, y: target.y + dy }
+    const { dx, dy } = calcForce(target, touch)
+    const space = 30
+    const newX = Math.min(Math.max(space, target.x + dx), this.width - space)
+    const newY = Math.min(Math.max(space, target.y + dy), this.height - space)
+    target = { x: newX, y: newY }
   },
   draw() {
     this.fillStyle = `rgb(${~~this.r},${~~this.g},${~~this.b})`
