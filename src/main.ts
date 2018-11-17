@@ -6,19 +6,13 @@ interface Point {
 }
 
 function power(a: Point, b: Point): number {
-  return 100 / distance(a, b)
+  return 300 / distance(a, b)
 }
 
 function angle(a: Point, b: Point): number {
   const dx = b.x - a.x
   const dy = b.y - a.y
   return Math.atan(dy / dx)
-}
-
-function angle2(a: Point, b: Point): number {
-  const dx = b.x - a.x
-  const dy = b.y - a.y
-  return Math.atan(dx / dy)
 }
 
 function distance(a: Point, b: Point): number {
@@ -33,7 +27,7 @@ interface Force {
 }
 
 function calcForce(a: Point, b: Point): Force {
-  const f = power(a, b)
+  const f = Math.max(0, power(a, b) - 1)
   const t = angle(a, b)
   var dy = f * Math.sin(t)
   var dx = f * Math.cos(t)
@@ -45,6 +39,7 @@ function calcForce(a: Point, b: Point): Force {
 }
 
 var target: Point = undefined
+var oldTarget: Point = undefined
 const ghost = document.getElementById('ghost')
 const canvas = document.getElementById('canvas')
 
@@ -66,13 +61,20 @@ Sketch.create({
     const space = 30
     const newX = Math.min(Math.max(space, target.x + dx), this.width - space)
     const newY = Math.min(Math.max(space, target.y + dy), this.height - space)
+    oldTarget = target
     target = { x: newX, y: newY }
   },
   draw() {
-    this.fillStyle = `rgb(${~~this.r},${~~this.g},${~~this.b})`
-    this.beginPath()
-    this.arc(target.x, target.y, 10, 0, 2 * Math.PI)
-    this.fill();
+    this.lineCap = 'round'
+    this.lineJoin = 'round'
+    this.lineWidth = 20
+    if (oldTarget !== undefined && target !== undefined) {
+      this.strokeStyle = `rgb(${~~this.r},${~~this.g},${~~this.b})`
+      this.beginPath()
+      this.moveTo(oldTarget.x, oldTarget.y)
+      this.lineTo(target.x, target.y)
+      this.stroke()
+    }
     ghost.style.top = `${target.y}px`
     ghost.style.left = `${target.x}px`
   }
